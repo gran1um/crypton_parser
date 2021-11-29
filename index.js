@@ -37,19 +37,31 @@ async function parse() {
     return;
   }
 
-  await sleep(getRandomInt(2000));
+  await sleep(2000);
 
   let data;
 
+  // data = await page.$$eval('.sc-1teo54s-0', elem => {
+  //   elem;
+    
+  // });
+  
+  // page.$$('.sc-1teo54s-0', el => el.innerText)
+ 
   data = await page.evaluate(() => {
-    let array = document.querySelectorAll(".sc-1teo54s-0");
-    console.log(array[0].innerText);
-    return array;
-  }, data);
+    console.log(document.querySelectorAll('.sc-1teo54s-0')); 
+    let array = document.querySelectorAll('.sc-1teo54s-0')
+    console.log(array)
+    return [...array]
+  });
+  
+  // await page.$$eval('.sc-1teo54s-0', a => a.parentElement.href);
 
-  await console.log(data);
 
-  await parse_pages(data);
+
+console.log(data);
+
+
 
   await sleep(getRandomInt(800000));
 }
