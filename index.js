@@ -40,28 +40,16 @@ async function parse() {
   await sleep(2000);
 
   let data;
-
-  // data = await page.$$eval('.sc-1teo54s-0', elem => {
-  //   elem;
-    
-  // });
-  
-  // page.$$('.sc-1teo54s-0', el => el.innerText)
- 
   data = await page.evaluate(() => {
-    console.log(document.querySelectorAll('.sc-1teo54s-0')); 
-    let array = document.querySelectorAll('.sc-1teo54s-0')
-    console.log(array)
-    return [...array]
+    let array = document.querySelectorAll(".sc-1teo54s-0");
+    let result = [];
+    array.forEach((element, index) => {
+      result[index] = element.parentElement.href;
+    });
+    return result;
   });
-  
-  // await page.$$eval('.sc-1teo54s-0', a => a.parentElement.href);
 
-
-
-console.log(data);
-
-
+  console.log(data);
 
   await sleep(getRandomInt(800000));
 }
