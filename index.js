@@ -15,31 +15,21 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
 //-----------------------------------------
 async function parse() {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
     hasTouch: true,
-    args: [
-      "--no-sandbox",
-      "--start-maximized",
-      "--disable-notifications"
-      
-    ],
+    args: ["--no-sandbox", "--start-maximized", "--disable-notifications"],
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 937 });
   await page.setDefaultNavigationTimeout(120000);
   const cloakedPage = puppeteerAfp(page);
-  let data;
-
 
   try {
-    await cloakedPage.goto(
-      "https://coinmarketcap.com/new/"
-    );
+    await cloakedPage.goto("https://coinmarketcap.com/new/");
   } catch (e) {
     console.log(e);
     await cloakedPage.close();
@@ -47,16 +37,32 @@ async function parse() {
     return;
   }
 
-  await sleep(getRandomInt(3000));
+  await sleep(getRandomInt(2000));
 
-  await page.evaluate(() => {
-      data = document.querySelectorAll('.sc-1teo54s-0')
-  })
+  let data;
+
+  data = await page.evaluate(() => {
+    let array = document.querySelectorAll(".sc-1teo54s-0");
+    console.log(array[0].innerText);
+    return array;
+  }, data);
+
+  await console.log(data);
+
+  await parse_pages(data);
 
   await sleep(getRandomInt(800000));
-
 }
 
+async function parse_pages(data) {
+  let pages;
+
+  data.forEach((element) => {
+    element.parentElement.click();
+    sleep(2000);
+    console.log(pages);
+  });
+}
 
 async function start() {
   try {
@@ -66,4 +72,4 @@ async function start() {
   }
 }
 
-start()
+start();
