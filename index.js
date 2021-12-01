@@ -37,7 +37,7 @@ async function parse() {
     return;
   }
 
-  await sleep(2000);
+  await sleep(1000);
 
   let data;
   data = await page.evaluate(() => {
@@ -49,19 +49,54 @@ async function parse() {
     return result;
   });
 
-  console.log(data);
+  await sleep(1000);
+
+  let token = {}; // =десь хранится информация о токенах
+
+  for (let i = 3; i < 4; i++) {
+    //data.length
+    let token_response = await allAboutTokens(data[i]);
+    await sleep(1000);
+    token = token_response;
+    // console.log(token);
+  }
+
+
+  console.log(token);
 
   await sleep(getRandomInt(800000));
-}
 
-async function parse_pages(data) {
-  let pages;
+  async function allAboutTokens(url) {
 
-  data.forEach((element) => {
-    element.parentElement.click();
-    sleep(2000);
-    console.log(pages);
-  });
+    let token_response = {};
+    await cloakedPage.goto(url);
+    await sleep(1000);
+    let name = await page.evaluate(() => {
+      return document.querySelector(".jCInrl").textContent;
+    });
+    let token_symbol = await page.evaluate(() => {
+      return document.querySelector(".nameSymbol").textContent;
+    });
+    let price = await page.evaluate(() => {
+      return document.querySelector(".priceValue").textContent;
+    });
+    let market_cap = await page.evaluate(() => {
+      return document.querySelector(".statsValue").textContent;
+    });
+    let total_supply = await page.evaluate(() => {
+      return document.querySelectorAll(".maxSupplyValue")[1].textContent;
+    });
+    let main_contract = await page.evaluate(() => {
+      return document.querySelector(".mainChainAddress").parentElement.href.split('/token/')[1];
+    });
+   
+
+    token_response[name] = { 'название': name, 'символ':token_symbol, "цена":price , "капитализация":market_cap, "количество токенов":total_supply, "контракт":main_contract};
+
+    // console.log(token_response);
+    await sleep(1000);
+    return token_response;
+  }
 }
 
 async function start() {
