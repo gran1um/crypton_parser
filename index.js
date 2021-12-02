@@ -61,13 +61,11 @@ async function parse() {
     // console.log(token);
   }
 
-
   console.log(token);
 
   await sleep(getRandomInt(800000));
 
   async function allAboutTokens(url) {
-
     let token_response = {};
     await cloakedPage.goto(url);
     await sleep(1000);
@@ -77,8 +75,8 @@ async function parse() {
     let token_symbol = await page.evaluate(() => {
       return document.querySelector(".nameSymbol").textContent;
     });
-    let price = await page.evaluate(() => {
-      return document.querySelector(".priceValue").textContent;
+    let token_price = await page.evaluate(() => {
+      return document.querySelector(".priceValue").textContent.replace("$", "");
     });
     let market_cap = await page.evaluate(() => {
       return document.querySelector(".statsValue").textContent;
@@ -86,12 +84,53 @@ async function parse() {
     let total_supply = await page.evaluate(() => {
       return document.querySelectorAll(".maxSupplyValue")[1].textContent;
     });
-    let main_contract = await page.evaluate(() => {
-      return document.querySelector(".mainChainAddress").parentElement.href.split('/token/')[1];
+    let main_chain = await page.evaluate(() => {
+      return document.querySelector(".mainChainTitle").innerText;
     });
-   
+    let main_contract = await page.evaluate(() => {
+      return document
+        .querySelector(".mainChainAddress")
+        .parentElement.href.split("/token/")[1];
+    });
 
-    token_response[name] = { 'название': name, 'символ':token_symbol, "цена":price , "капитализация":market_cap, "количество токенов":total_supply, "контракт":main_contract};
+    let max_token_price = await page.evaluate(() => {
+      document.querySelector(".irKQAw").click();
+      document.querySelectorAll(".n78udj-7 li")[2].click();
+      return document
+        .querySelectorAll(".n78udj-5")[1]
+        .innerText.replace("$", "");
+    });
+
+    let min_token_price = await page.evaluate(() => {
+      return document
+        .querySelectorAll(".n78udj-5")[0]
+        .innerText.replace("$", "");
+    });
+
+    let percent_all_time =
+      Math.round(
+        (parseFloat(max_token_price) / parseFloat(min_token_price)) * 100
+      ) + "%";
+    let percent_current =
+      Math.round(
+        (parseFloat(token_price) / parseFloat(min_token_price)) * 100
+      ) + "%";
+
+    min_token_price = "$" + min_token_price;
+    token_price = "$" + token_price + " (" + percent_current + ")";
+    max_token_price = "$" + max_token_price + " (" + percent_all_time + ")";
+
+    token_response[name] = {
+      название: name,
+      символ: token_symbol,
+      цена: token_price,
+      "максимальная цена": max_token_price,
+      "минимальная цена": min_token_price,
+      капитализация: market_cap,
+      "количество токенов": total_supply,
+      сеть: main_chain,
+      контракт: main_contract,
+    };
 
     // console.log(token_response);
     await sleep(1000);
