@@ -53,11 +53,11 @@ async function parse() {
 
   let token = {}; // =десь хранится информация о токенах
 
-  for (let i = 3; i < 4; i++) {
+  for (let i = 0; i < 4; i++) {
     //data.length
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
-    token = token_response;
+    token[token_response['название']]=token_response;
     // console.log(token);
   }
 
@@ -76,7 +76,9 @@ async function parse() {
       return document.querySelector(".nameSymbol").textContent;
     });
     let token_price = await page.evaluate(() => {
-      return document.querySelector(".priceValue").textContent.replace("$", "");
+      return document
+        .querySelector(".sc-16r8icm-0 .fmPyWa tr td")
+        .innerText.replace("$", "");
     });
     let market_cap = await page.evaluate(() => {
       return document.querySelector(".statsValue").textContent;
@@ -88,22 +90,25 @@ async function parse() {
       return document.querySelector(".mainChainTitle").innerText;
     });
     let main_contract = await page.evaluate(() => {
-      return document
-        .querySelector(".mainChainAddress")
-        .parentElement.href.split("/token/")[1];
+      return (
+        "0x" +
+        document
+          .querySelector(".mainChainAddress")
+          .parentElement.href.split("0x")[1]
+      );
     });
 
     let max_token_price = await page.evaluate(() => {
-      document.querySelector(".irKQAw").click();
-      document.querySelectorAll(".n78udj-7 li")[2].click();
+      document.querySelectorAll(".dDXPcp")[1].click()
+
       return document
-        .querySelectorAll(".n78udj-5")[1]
+        .querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td span")[8]
         .innerText.replace("$", "");
     });
 
     let min_token_price = await page.evaluate(() => {
       return document
-        .querySelectorAll(".n78udj-5")[0]
+        .querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td span")[11]
         .innerText.replace("$", "");
     });
 
@@ -120,7 +125,7 @@ async function parse() {
     token_price = "$" + token_price + " (" + percent_current + ")";
     max_token_price = "$" + max_token_price + " (" + percent_all_time + ")";
 
-    token_response[name] = {
+    token_response = {
       название: name,
       символ: token_symbol,
       цена: token_price,
