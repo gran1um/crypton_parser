@@ -4,6 +4,7 @@ puppeteer.use(StealthPlugin());
 const puppeteerAfp = require("puppeteer-afp");
 const axios = require("axios");
 const fs = require("fs");
+const { log } = require("console");
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -53,7 +54,7 @@ async function parse() {
 
   let token = {}; // =десь хранится информация о токенах
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 5; i < 7; i++) {
     //data.length
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
@@ -87,32 +88,65 @@ async function parse() {
       return document.querySelectorAll(".maxSupplyValue")[1].textContent;
     });
     let main_chain = await page.evaluate(() => {
-      return document.querySelector(".mainChainTitle").innerText;
+      return document.querySelector(".mainChainTitle").textContent;
     });
     let main_contract = await page.evaluate(() => {
-      return (
-        "0x" +
+      let result = document.querySelector(".mainChainAddress").parentElement.href
+
+      if (result.includes('harmony')){
+        result = "one" +
+        document.querySelector(".mainChainAddress").parentElement.href.split("one")[1]
+      
+      }
+      else if (result.includes('solana')){
+        result =
         document
-          .querySelector(".mainChainAddress")
-          .parentElement.href.split("0x")[1]
-      );
+        .querySelector(".mainChainAddress")
+        .parentElement.href.split("token/")[1]
+      }
+      else {
+        result = '0x' +
+        document
+        .querySelector(".mainChainAddress")
+        .parentElement.href.split("0x")[1]
+      }
+      
+      return result
     });
 
-    let max_token_price = await page.evaluate(() => {
-      document.querySelectorAll(".dDXPcp")[1].click()
+    let max_token_price
+    try {
 
-      return document
-        .querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td span")[8]
-        .innerText.replace("$", "");
-    });
+      max_token_price = await page.evaluate(() => {
+        document.querySelectorAll(".dDXPcp")[1].click()
+        
+        return (document.querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td")[17].innerText.split('\n')[0].replace('$',''));
+      });
+  
+  
+    } catch (error) {
+      max_token_price='Нет данных'
+    }
 
-    let min_token_price = await page.evaluate(() => {
-      return document
-        .querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td span")[11]
-        .innerText.replace("$", "");
-    });
+    let min_token_price 
+    try {
+      min_token_price = await page.evaluate(() => {
+        return (document.querySelectorAll(".sc-16r8icm-0 .fmPyWa tr td")[18].innerText.split('\n')[0].replace('$',''));
+    })}
+    catch (error) {
+    min_token_price='No Data'
+    }
 
-    let percent_all_time =
+
+    
+
+    
+
+    if (max_token_price == 'No Data' | min_token_price=='No Data'){
+
+    }
+    else{
+      let percent_all_time =
       Math.round(
         (parseFloat(max_token_price) / parseFloat(min_token_price)) * 100
       ) + "%";
@@ -124,6 +158,8 @@ async function parse() {
     min_token_price = "$" + min_token_price;
     token_price = "$" + token_price + " (" + percent_current + ")";
     max_token_price = "$" + max_token_price + " (" + percent_all_time + ")";
+    }
+    
 
     token_response = {
       название: name,

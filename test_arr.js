@@ -42,6 +42,6 @@ token = data.forEach((element,index) => {
 console.log(a);
 
 
-let str = 'dwqfdewfwe0xkokdfoefoewf'
-str = str.split('0x')[1]
+let str = '\\n'
+
 console.log(str)
