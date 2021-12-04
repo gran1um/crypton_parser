@@ -42,6 +42,8 @@ token = data.forEach((element,index) => {
 console.log(a);
 
 
-let str = '\\n'
+let q ={}
 
-console.log(str)
+q['dsd']='ddd'
+q['ffdfs']['ddd']='eqwfwe'
+console.log(q)
