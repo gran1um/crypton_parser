@@ -17,6 +17,10 @@ function getRandomInt(min, max) {
 }
 
 //-----------------------------------------
+
+// здесь хранится информация о токенах
+
+//------------main function-----------
 async function parse() {
   const browser = await puppeteer.launch({
     headless: false,
@@ -28,7 +32,7 @@ async function parse() {
   await page.setViewport({ width: 1920, height: 937 });
   await page.setDefaultNavigationTimeout(120000);
   const cloakedPage = puppeteerAfp(page);
-
+  let token = {};
   try {
     await cloakedPage.goto("https://coinmarketcap.com/new/");
   } catch (e) {
@@ -52,8 +56,6 @@ async function parse() {
 
   await sleep(1000);
 
-  let token = {}; // здесь хранится информация о токенах
-
   for (let i = 0; i < 3; i++) {
     //data.length
     let token_response = await allAboutTokens(data[i]);
@@ -64,8 +66,11 @@ async function parse() {
 
   console.log(token);
 
+  return token;
+
   await sleep(getRandomInt(800000));
 
+  //--------------------functions-----------------------------
   async function allAboutTokens(url) {
     let token_response = {};
     await cloakedPage.goto(url);
@@ -325,10 +330,136 @@ async function parse() {
 }
 
 async function start() {
-  try {
-    await parse();
-  } catch (e) {
-    console.log(e);
+  while (true) {
+    try {
+      let date = new Date();
+      let token_info = {};
+      let data = `<!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+          />
+      
+          <title>Crypto Hamster</title>
+        </head>
+        <body>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
+
+      token_info = await parse();
+      console.log(token_info);
+
+      await sleep(3000);
+      try {
+        Object.keys(token_info).forEach((element) => {
+          data += `<div
+    class="card mb-3"
+    style="
+      width: 600px;
+      height: auto;
+      margin: 30px;
+      background: rgba(95, 95, 92, 0.4);
+    "
+  >
+    <div class="row g-0">
+      <div class="col-md-12">
+        <div class="card-body">
+          <h4 class="card-title" style="margin: 20px 0 40px">
+            ${token_info[element]["название"]} (${
+            token_info[element]["символ"]
+          })
+          </h4>
+          <p class="card-text">
+            <b>About token (citation): </b>"${token_info[element]["о токене"]}"
+          </p>
+          <p class="card-text"><b>Price: </b>${token_info[element]["цена"]}</p>
+          <p class="card-text"><b>Max price: </b>${
+            token_info[element]["максимальная цена"]
+          }</p>
+          <p class="card-text"><b>Min price : </b>${
+            token_info[element]["минимальная цена"]
+          }</p>
+
+          <p class="card-text"><b>Market cap: </b>${
+            token_info[element]["капитализация"]
+          }</p>
+
+          <p class="card-text"><b>Total Supply: </b>${
+            token_info[element]["количество токенов"]
+          }</p>
+
+          <p class="card-text">
+            <b>Main network: </b>${token_info[element]["сеть"]}
+          </p>
+          <p class="card-text">
+            <b>Contract: </b> ${token_info[element]["контракт"]}
+          </p>
+          <p class="card-text">
+            <b>Twitter link: </b>
+            <a
+              href="${token_info[element]["twitter link"]}"
+              style="color: inherit"
+              >${token_info[element]["twitter link"]}"</a
+            >
+          </p>
+          <p class="card-text"><b>Twitter followers: </b> ${
+            token_info[element]["twitter info"]["количество читателей"]
+          }</p>
+          <p class="card-text"><b>Сount of tweets: </b>${
+            token_info[element]["twitter info"]["количество твитов"]
+          }</p>
+          <p class="card-text" style='text-align:center'>
+            <b>PINNED ENTRY</b> <br />
+            <b>Content:</b> ${
+              token_info[element]["twitter info"]["Закрепленная запись"][
+                "Содержание"
+              ]
+            } <br />
+            <b>Likes:</b> ${
+              token_info[element]["twitter info"]["Закрепленная запись"][
+                "количество лайков"
+              ]
+            } <br />
+            <b>Comments:</b> ${
+              token_info[element]["twitter info"]["Закрепленная запись"][
+                "количество комментариев"
+              ]
+            } <br />
+            <b>Retweets:</b> ${
+              token_info[element]["twitter info"]["Закрепленная запись"][
+                "количество ретвитов"
+              ]
+            }
+          </p>
+
+          <p class="card-text">
+            <small class="text-muted">${date.getDate()}.${
+            date.getMonth() + 1
+          }.${date.getFullYear()}</small>
+          </p>
+        </div>
+      </div>
+    </div></div>`;
+        });
+        console.log(data);
+        data += "</div></body></html>";
+
+        fs.appendFileSync(
+          `crypro hamster ${date.getDate()}.${date.getMonth() + 1}.html`,
+          data
+        );
+      } catch (error) {}
+
+      await sleep(4 * 60 * 6 * 1000);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
