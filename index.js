@@ -4,7 +4,6 @@ puppeteer.use(StealthPlugin());
 const puppeteerAfp = require("puppeteer-afp");
 const axios = require("axios");
 const fs = require("fs");
-const { info } = require("console");
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -224,6 +223,15 @@ async function parse() {
           "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
         )[0].innerText;
 
+        let temp = document.querySelector("time").dateTime.split("T")[0];
+
+        twitter_pinned_entry["дата публикации"] =
+          temp.split("-")[2] +
+          "-" +
+          temp.split("-")[1] +
+          "-" +
+          temp.split("-")[0];
+
         twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
         return twitter_ext;
       });
@@ -290,6 +298,15 @@ async function parse() {
             document.querySelectorAll(
               "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
             )[0].innerText;
+
+          let temp = document.querySelector("time").dateTime.split("T")[0];
+
+          twitter_pinned_entry["дата публикации"] =
+            temp.split("-")[2] +
+            "-" +
+            temp.split("-")[1] +
+            "-" +
+            temp.split("-")[0];
 
           twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
           return twitter_ext;
@@ -364,7 +381,11 @@ async function start() {
       width: 600px;
       height: auto;
       margin: 30px;
-      background: rgba(95, 95, 92, 0.4);
+      border-radius:10px;
+      background: rgba(${getRandomInt(0, 255)}, ${getRandomInt(
+            0,
+            255
+          )}, ${getRandomInt(0, 255)}, 0.4);
     "
   >
     <div class="row g-0">
@@ -435,10 +456,16 @@ async function start() {
               token_info[element]["twitter info"]["Закрепленная запись"][
                 "количество ретвитов"
               ]
+            } <br />
+            
+            <b>Publication date :</b> ${
+              token_info[element]["twitter info"]["Закрепленная запись"][
+                "дата публикации"
+              ]
             }
           </p>
 
-          <p class="card-text">
+          <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 20px; margin-tp: 10px;">
             <small class="text-muted">${date.getDate()}.${
             date.getMonth() + 1
           }.${date.getFullYear()}</small>
@@ -448,10 +475,13 @@ async function start() {
     </div></div>`;
         });
         console.log(data);
+
         data += "</div></body></html>";
 
         fs.appendFileSync(
-          `crypro hamster ${date.getDate()}.${date.getMonth() + 1}.html`,
+          `Crypto Ham$ter от ${date.getDate()}.${
+            date.getMonth() + 1
+          }.${date.getFullYear()}.html`,
           data
         );
       } catch (error) {}
