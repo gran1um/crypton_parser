@@ -4,6 +4,11 @@ puppeteer.use(StealthPlugin());
 const puppeteerAfp = require("puppeteer-afp");
 const axios = require("axios");
 const fs = require("fs");
+const { response } = require("express");
+const rp = require("request-promise");
+const { Telegraf } = require("telegraf");
+const { send } = require("process");
+require("dotenv").config();
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -17,12 +22,12 @@ function getRandomInt(min, max) {
 
 //-----------------------------------------
 
-// здесь хранится информация о токенах
+let current_last_file;
 
 //------------main function-----------
 async function parse() {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null,
     hasTouch: true,
     args: ["--no-sandbox", "--start-maximized", "--disable-notifications"],
@@ -55,19 +60,13 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 0; i < 3; i++) {
-    //data.length
+  for (let i = 0; i < data.length; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
-    // console.log(token);
   }
 
-  console.log(token);
-
   return token;
-
-  await sleep(getRandomInt(800000));
 
   //--------------------functions-----------------------------
   async function allAboutTokens(url) {
@@ -242,7 +241,6 @@ async function parse() {
         ).innerText;
       });
       about_token = about_token.split(/\n/)[0];
-      console.log(twitter_ext);
     } catch (error) {
       try {
         twitter = await page.evaluate(() => {
@@ -318,7 +316,6 @@ async function parse() {
           ).innerText;
         });
         about_token = about_token.split(/\n/)[0];
-        console.log(twitter_ext);
       } catch (error) {
         twitter = "No Data";
         twitter_ext = "No Data";
@@ -340,7 +337,6 @@ async function parse() {
       "twitter info": twitter_ext,
     };
 
-    // console.log(token_response);
     await sleep(1000);
     return token_response;
   }
@@ -370,8 +366,7 @@ async function start() {
           <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
 
       token_info = await parse();
-      console.log(token_info);
-
+      console.log("complete!");
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
@@ -465,7 +460,7 @@ async function start() {
             }
           </p>
 
-          <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 20px; margin-tp: 10px;">
+          <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 20px; margin-top: 10px;">
             <small class="text-muted">${date.getDate()}.${
             date.getMonth() + 1
           }.${date.getFullYear()}</small>
@@ -474,9 +469,12 @@ async function start() {
       </div>
     </div></div>`;
         });
-        console.log(data);
 
         data += "</div></body></html>";
+
+        current_last_file = `Crypto Ham$ter от ${date.getDate()}.${
+          date.getMonth() + 1
+        }.${date.getFullYear()}.html`;
 
         fs.appendFileSync(
           `Crypto Ham$ter от ${date.getDate()}.${
@@ -486,7 +484,7 @@ async function start() {
         );
       } catch (error) {}
 
-      await sleep(4 * 60 * 6 * 1000);
+      await sleep(24 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
     }
@@ -494,3 +492,47 @@ async function start() {
 }
 
 start();
+
+const bot = new Telegraf(process.env.BOT_TOKEN);
+bot.start((ctx) => ctx.reply(""));
+
+bot.help((ctx) => ctx.reply());
+
+bot.command("hamster", async (ctx) => {
+  try {
+    ctx.telegram.sendDocument(ctx.from.id, {
+      source: current_last_file,
+      filename: current_last_file,
+    });
+  } catch (e) {
+    console.log(e);
+    ctx.reply(
+      "Что-то пошло не так :(" +
+        "\n" +
+        "Проверь правильность ввода и повтори попытку"
+    );
+  }
+});
+
+let simply_answer = [
+  "На каком это языке? ",
+  "Не понял :( ",
+  "🤷‍♂️",
+  "🤕",
+  "🤔",
+  "😴",
+  "🤐",
+  "🤯",
+];
+
+function randomInteger(min, max) {
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
+}
+
+bot.on("text", async (ctx) => {
+  await ctx.reply(simply_answer[randomInteger(0, simply_answer.length - 1)]);
+  await ctx.reply("Чтобы понять как со мной общаться используй /help");
+});
+
+bot.launch();

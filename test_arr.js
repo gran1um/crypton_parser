@@ -59,16 +59,11 @@ async function d(){
       }
     }
   }
+  let date= new Date()
+  console.log(`Crypto Ham$ter от ${date.getDate()}.${
+    date.getMonth() + 1
+  }.${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}.html`);
 
-  await Object.keys(q).forEach(element => {
-    
-      console.log(q[element]["название"])
-      console.log( q[element]['twitter info']['количество читателей'] );
-      console.log(q[element]["цена"])
-   
-      
-
-});
 }
 
 d()
