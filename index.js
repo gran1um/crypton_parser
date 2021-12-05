@@ -60,7 +60,7 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 0; i < data.length-25; i++) {
+  for (let i = 0; i < data.length; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
@@ -178,21 +178,15 @@ async function parse() {
         let array = document.querySelectorAll(".tippy-content ul li");
         let result;
         for (let i = 0; i < array.length; i++) {
-
           if (array[i].innerText.includes("twitter.com")) {
-
             result = array[i].children[0].href;
-            break
-
+            break;
           } else {
             result = "No Data";
           }
-       }
-       return result
-      })
-     
-
-    
+        }
+        return result;
+      });
 
       await cloakedPage.goto(twitter);
 
@@ -374,7 +368,7 @@ async function start() {
           <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
 
       token_info = await parse();
-    
+
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
