@@ -22,7 +22,7 @@ function getRandomInt(min, max) {
 
 //-----------------------------------------
 
-let current_last_file;
+let current_last_file = "Crypto Ham$ter от 5.12.2021.html";
 
 //------------main function-----------
 async function parse() {
@@ -60,7 +60,7 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length-25; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
@@ -172,20 +172,27 @@ async function parse() {
         "#__next > div > div > div.sc-57oli2-0.comDeo.cmc-body-wrapper > div > div.sc-16r8icm-0.eMxKgr.container > div.n78udj-0.jskEGI > div > div.sc-16r8icm-0.hMKivi.linksSection > div > div.sc-16r8icm-0.sc-10up5z1-1.eUVvdh > ul > li:nth-child(3) > button"
       );
 
-      await sleep(1000);
+      await sleep(2000);
 
       twitter = await page.evaluate(() => {
         let array = document.querySelectorAll(".tippy-content ul li");
         let result;
-        array.forEach((element) => {
-          if (element.innerText.includes("twitter")) {
-            result = element.children[0].href;
+        for (let i = 0; i < array.length; i++) {
+
+          if (array[i].innerText.includes("twitter.com")) {
+
+            result = array[i].children[0].href;
+            break
+
           } else {
             result = "No Data";
           }
-        });
-        return result;
-      });
+       }
+       return result
+      })
+     
+
+    
 
       await cloakedPage.goto(twitter);
 
@@ -319,6 +326,7 @@ async function parse() {
       } catch (error) {
         twitter = "No Data";
         twitter_ext = "No Data";
+        about_token = "No Data";
       }
     }
 
@@ -366,7 +374,7 @@ async function start() {
           <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
 
       token_info = await parse();
-      console.log("complete!");
+    
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
@@ -430,7 +438,7 @@ async function start() {
           <p class="card-text"><b>Сount of tweets: </b>${
             token_info[element]["twitter info"]["количество твитов"]
           }</p>
-          <p class="card-text" style='text-align:center'>
+          <p class="card-text" style='text-align:center; margin-bottom:20px' >
             <b>PINNED ENTRY</b> <br />
             <b>Content:</b> ${
               token_info[element]["twitter info"]["Закрепленная запись"][
@@ -460,7 +468,7 @@ async function start() {
             }
           </p>
 
-          <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 20px; margin-top: 10px;">
+          <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 10px;">
             <small class="text-muted">${date.getDate()}.${
             date.getMonth() + 1
           }.${date.getFullYear()}</small>
@@ -471,17 +479,21 @@ async function start() {
         });
 
         data += "</div></body></html>";
-
-        current_last_file = `Crypto Ham$ter от ${date.getDate()}.${
-          date.getMonth() + 1
-        }.${date.getFullYear()}.html`;
-
-        fs.appendFileSync(
-          `Crypto Ham$ter от ${date.getDate()}.${
+        try {
+          current_last_file = `Crypto Ham$ter от ${date.getDate()}.${
             date.getMonth() + 1
-          }.${date.getFullYear()}.html`,
-          data
-        );
+          }.${date.getFullYear()}.html`;
+
+          fs.writeFileSync(
+            `Crypto Ham$ter от ${date.getDate()}.${
+              date.getMonth() + 1
+            }.${date.getFullYear()}.html`,
+            data
+          );
+          console.log("complete html doc!");
+        } catch (e) {
+          console.log(e);
+        }
       } catch (error) {}
 
       await sleep(24 * 60 * 60 * 1000);
