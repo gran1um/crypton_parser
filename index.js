@@ -84,16 +84,16 @@ async function parse() {
     let market_cap = await page.evaluate(() => {
       return document.querySelector(".statsValue").textContent;
     });
-    let total_supply
+    let total_supply;
 
     try {
       total_supply = await page.evaluate(() => {
         return document.querySelectorAll(".maxSupplyValue")[1].textContent;
       });
     } catch (error) {
-      total_supply='No Data'
+      total_supply = "No Data";
     }
-    
+
     let main_chain = await page.evaluate(() => {
       return document.querySelector(".mainChainTitle").textContent;
     });
@@ -162,16 +162,15 @@ async function parse() {
     }
 
     let twitter_ext = {};
-    let twitter
-    
+    let twitter;
+    let about_token;
     try {
-
       await page.hover(
         "#__next > div > div > div.sc-57oli2-0.comDeo.cmc-body-wrapper > div > div.sc-16r8icm-0.eMxKgr.container > div.n78udj-0.jskEGI > div > div.sc-16r8icm-0.hMKivi.linksSection > div > div.sc-16r8icm-0.sc-10up5z1-1.eUVvdh > ul > li:nth-child(3) > button"
       );
-  
+
       await sleep(1000);
-  
+
       twitter = await page.evaluate(() => {
         let array = document.querySelectorAll(".tippy-content ul li");
         let result;
@@ -184,44 +183,130 @@ async function parse() {
         });
         return result;
       });
-  
+
       await cloakedPage.goto(twitter);
-  
+
       await sleep(2000);
-     
-  
+
       twitter_ext = await page.evaluate(() => {
         let twitter_ext = {};
         twitter_ext["количество читателей"] = document.querySelector(
           "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
         ).innerText;
-  
+
         twitter_ext["количество твитов"] = document.querySelector(
           "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
         ).innerText;
-  
-          twitter_pinned_entry = {}
-          twitter_pinned_entry['Содержание'] = document.querySelectorAll('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')[0].innerText
-  
-          twitter_pinned_entry['количество лайков'] = document.querySelectorAll('div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span')[0].innerText
-  
-          twitter_pinned_entry['количество комментариев'] = document.querySelectorAll('div:nth-child(1) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span')[0].innerText
-  
-          twitter_pinned_entry['количество ретвитов'] = document.querySelectorAll('div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span')[0].innerText[0].innerText
-          twitter_ext['Закрепленная запись'] = twitter_pinned_entry
+
+        twitter_pinned_entry = {};
+        twitter_pinned_entry["Содержание"] = document.querySelectorAll(
+          ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
+        )[0].innerText;
+        twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
+          "Содержание"
+        ].replace(/\n/g, " ");
+
+        twitter_pinned_entry["количество лайков"] = document.querySelectorAll(
+          "div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+        )[0].innerText;
+
+        twitter_pinned_entry["количество комментариев"] =
+          document.querySelectorAll(
+            "div:nth-child(1) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+          )[0].innerText;
+
+        twitter_pinned_entry["количество ретвитов"] = document.querySelectorAll(
+          "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+        )[0].innerText;
+
+        twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
         return twitter_ext;
       });
-      console.log(twitter_ext);
 
+      about_token = await page.evaluate(() => {
+        return document.querySelector(
+          "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
+        ).innerText;
+      });
+      about_token = about_token.split(/\n/)[0];
+      console.log(twitter_ext);
     } catch (error) {
-      twitter='No Data'
-      twitter_ext = 'No Data'
+      try {
+        twitter = await page.evaluate(() => {
+          let result;
+          if (
+            document
+              .querySelector(
+                "#__next > div > div > div.sc-57oli2-0.comDeo.cmc-body-wrapper > div > div.sc-16r8icm-0.eMxKgr.container > div.n78udj-0.jskEGI > div > div.sc-16r8icm-0.hMKivi.linksSection > div > div.sc-16r8icm-0.sc-10up5z1-1.eUVvdh > ul > li:nth-child(3) > a"
+              )
+              .href.includes("twitter.com")
+          ) {
+            result = document.querySelector(
+              "#__next > div > div > div.sc-57oli2-0.comDeo.cmc-body-wrapper > div > div.sc-16r8icm-0.eMxKgr.container > div.n78udj-0.jskEGI > div > div.sc-16r8icm-0.hMKivi.linksSection > div > div.sc-16r8icm-0.sc-10up5z1-1.eUVvdh > ul > li:nth-child(3) > a"
+            ).href;
+            return result;
+          }
+        });
+
+        await cloakedPage.goto(twitter);
+
+        await sleep(2000);
+
+        twitter_ext = await page.evaluate(() => {
+          let twitter_ext = {};
+
+          twitter_ext["количество читателей"] = document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
+          ).innerText;
+
+          twitter_ext["количество твитов"] = document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
+          ).innerText;
+
+          twitter_pinned_entry = {};
+          twitter_pinned_entry["Содержание"] = document.querySelectorAll(
+            ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
+          )[0].innerText;
+
+          twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
+            "Содержание"
+          ].replace(/\n/g, " ");
+
+          twitter_pinned_entry["количество лайков"] = document.querySelectorAll(
+            "div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+          )[0].innerText;
+
+          twitter_pinned_entry["количество комментариев"] =
+            document.querySelectorAll(
+              "div:nth-child(1) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+            )[0].innerText;
+
+          twitter_pinned_entry["количество ретвитов"] =
+            document.querySelectorAll(
+              "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+            )[0].innerText;
+
+          twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
+          return twitter_ext;
+        });
+
+        about_token = await page.evaluate(() => {
+          return document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
+          ).innerText;
+        });
+        about_token = about_token.split(/\n/)[0];
+        console.log(twitter_ext);
+      } catch (error) {
+        twitter = "No Data";
+        twitter_ext = "No Data";
+      }
     }
-    
 
     token_response = {
       название: name,
       символ: token_symbol,
+      "о токене": about_token,
       цена: token_price,
       "максимальная цена": max_token_price,
       "минимальная цена": min_token_price,

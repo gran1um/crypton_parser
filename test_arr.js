@@ -44,6 +44,7 @@ console.log(a);
 
 let q ={}
 
-q['dsd']='ddd'
-q['ffdfs']['ddd']='eqwfwe'
+q= 'fewgwregregwrgegwe\\nffwrefwewerfwrefw\\nfewferwfwe'
+console.log(q)
+q.replace('\\n', '')
 console.log(q)
