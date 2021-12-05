@@ -187,7 +187,7 @@ async function parse() {
         }
         return result;
       });
-
+      console.log(twitter);
       await cloakedPage.goto(twitter);
 
       await sleep(2000);
@@ -259,7 +259,7 @@ async function parse() {
             return result;
           }
         });
-
+        console.log(twitter);
         await cloakedPage.goto(twitter);
 
         await sleep(2000);
@@ -372,26 +372,85 @@ async function start() {
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
-          data += `<div
-    class="card mb-3"
-    style="
-      width: 600px;
-      height: auto;
-      margin: 30px;
-      border-radius:10px;
-      background: rgba(${getRandomInt(0, 255)}, ${getRandomInt(
-            0,
-            255
-          )}, ${getRandomInt(0, 255)}, 0.4);
-    "
-  >
-    <div class="row g-0">
-      <div class="col-md-12">
-        <div class="card-body">
-          <h4 class="card-title" style="margin: 20px 0 40px">
+          if (token_info[element]["twitter info"] == "No Data") {
+            data += `<div
+            class="card mb-3"
+            style="
+              width: 600px;
+              height: auto;
+              margin: 30px;
+              border-radius:10px;
+              background: rgba(${getRandomInt(0, 255)}, ${getRandomInt(
+              0,
+              255
+            )}, ${getRandomInt(0, 255)}, 0.4)">
+            <div class="row g-0">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h4 class="card-title" style="margin: 20px 0 40px">
+      ${token_info[element]["название"]} (${token_info[element]["символ"]})
+    </h4>
+    <p class="card-text">
+      <b>About token (citation): </b>"${token_info[element]["о токене"]}"
+    </p>
+    <p class="card-text"><b>Price: </b>${token_info[element]["цена"]}</p>
+    <p class="card-text"><b>Max price: </b>${
+      token_info[element]["максимальная цена"]
+    }</p>
+    <p class="card-text"><b>Min price : </b>${
+      token_info[element]["минимальная цена"]
+    }</p>
+
+    <p class="card-text"><b>Market cap: </b>${
+      token_info[element]["капитализация"]
+    }</p>
+
+    <p class="card-text"><b>Total Supply: </b>${
+      token_info[element]["количество токенов"]
+    }</p>
+
+    <p class="card-text">
+      <b>Main network: </b>${token_info[element]["сеть"]}
+    </p>
+    <p class="card-text">
+      <b>Contract: </b> ${token_info[element]["контракт"]}
+    </p>
+    <p class="card-text">
+      <b>Twitter link: </b>
+      <a
+        href="${token_info[element]["twitter link"]}"
+        style="color: inherit"
+        >${token_info[element]["twitter link"]}</a
+      >
+    </p>
+
+    <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 10px;">
+      <small class="text-muted">${date.getDate()}.${
+              date.getMonth() + 1
+            }.${date.getFullYear()}</small>
+    </p>
+  </div>
+</div>
+</div></div>`;
+          } else {
+            data += `<div
+                  class="card mb-3"
+                  style="
+                    width: 600px;
+                    height: auto;
+                    margin: 30px;
+                    border-radius:10px;
+                    background: rgba(${getRandomInt(0, 255)}, ${getRandomInt(
+              0,
+              255
+            )}, ${getRandomInt(0, 255)}, 0.4)">
+                  <div class="row g-0">
+                    <div class="col-md-12">
+                      <div class="card-body">
+                        <h4 class="card-title" style="margin: 20px 0 40px">
             ${token_info[element]["название"]} (${
-            token_info[element]["символ"]
-          })
+              token_info[element]["символ"]
+            })
           </h4>
           <p class="card-text">
             <b>About token (citation): </b>"${token_info[element]["о токене"]}"
@@ -423,7 +482,7 @@ async function start() {
             <a
               href="${token_info[element]["twitter link"]}"
               style="color: inherit"
-              >${token_info[element]["twitter link"]}"</a
+              >${token_info[element]["twitter link"]}</a
             >
           </p>
           <p class="card-text"><b>Twitter followers: </b> ${
@@ -464,12 +523,13 @@ async function start() {
 
           <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 10px;">
             <small class="text-muted">${date.getDate()}.${
-            date.getMonth() + 1
-          }.${date.getFullYear()}</small>
+              date.getMonth() + 1
+            }.${date.getFullYear()}</small>
           </p>
         </div>
       </div>
     </div></div>`;
+          }
         });
 
         data += "</div></body></html>";
