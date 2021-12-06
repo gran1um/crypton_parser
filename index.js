@@ -46,7 +46,7 @@ async function parse() {
     return;
   }
 
-  await sleep(1000);
+  await sleep(2000);
 
   let data;
   data = await page.evaluate(() => {
@@ -284,7 +284,7 @@ async function parse() {
         console.log(twitter);
         await cloakedPage.goto(twitter);
 
-        await sleep(2000);
+        await sleep(3000);
 
         twitter_ext = await page.evaluate(() => {
           let twitter_ext = {};
@@ -353,7 +353,7 @@ async function parse() {
         about_token = "No Data";
       }
     }
-    console.log(twitter_ext);
+    
     token_response = {
       название: name,
       символ: token_symbol,
@@ -398,7 +398,7 @@ async function start() {
           <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
 
       token_info = await parse();
-      console.log(token_info);
+      
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
@@ -597,17 +597,19 @@ async function start() {
 start();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+let count = 0;
 bot.start((ctx) => ctx.reply(""));
 
 bot.help((ctx) => ctx.reply());
 
 bot.command("hamster", async (ctx) => {
-  let count = 0;
+  
   try {
     ctx.telegram.sendDocument(ctx.from.id, {
       source: current_last_file,
       filename: current_last_file,
     });
+    count++
     console.log("html has been send " + count + " times");
   } catch (e) {
     console.log(e);
