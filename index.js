@@ -27,7 +27,7 @@ let current_last_file = "Crypto Ham$ter от 5.12.2021.html";
 //------------main function-----------
 async function parse() {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     defaultViewport: null,
     hasTouch: true,
     args: ["--no-sandbox", "--start-maximized", "--disable-notifications"],
@@ -97,33 +97,39 @@ async function parse() {
       total_supply = "No Data";
     }
 
-    let main_chain = await page.evaluate(() => {
-      return document.querySelector(".mainChainTitle").textContent;
-    });
-    let main_contract = await page.evaluate(() => {
-      let result =
-        document.querySelector(".mainChainAddress").parentElement.href;
+    let main_chain;
+    let main_contract;
+    try {
+      main_chain = await page.evaluate(() => {
+        return document.querySelector(".mainChainTitle").textContent;
+      });
+      main_contract = await page.evaluate(() => {
+        let result =
+          document.querySelector(".mainChainAddress").parentElement.href;
 
-      if (result.includes("harmony")) {
-        result =
-          "one" +
-          document
+        if (result.includes("harmony")) {
+          result =
+            "one" +
+            document
+              .querySelector(".mainChainAddress")
+              .parentElement.href.split("one")[1];
+        } else if (result.includes("solana")) {
+          result = document
             .querySelector(".mainChainAddress")
-            .parentElement.href.split("one")[1];
-      } else if (result.includes("solana")) {
-        result = document
-          .querySelector(".mainChainAddress")
-          .parentElement.href.split("token/")[1];
-      } else {
-        result =
-          "0x" +
-          document
-            .querySelector(".mainChainAddress")
-            .parentElement.href.split("0x")[1];
-      }
-
-      return result;
-    });
+            .parentElement.href.split("token/")[1];
+        } else {
+          result =
+            "0x" +
+            document
+              .querySelector(".mainChainAddress")
+              .parentElement.href.split("0x")[1];
+        }
+        return result;
+      });
+    } catch (error) {
+      main_chain = "Exchange only";
+      main_contract = "Has no contract";
+    }
 
     let max_token_price;
     try {
@@ -188,53 +194,64 @@ async function parse() {
         return result;
       });
       console.log(twitter);
+
       await cloakedPage.goto(twitter);
 
       await sleep(2000);
 
-      twitter_ext = await page.evaluate(() => {
-        let twitter_ext = {};
-        twitter_ext["количество читателей"] = document.querySelector(
-          "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
-        ).innerText;
+      try {
+        twitter_ext = await page.evaluate(() => {
+          let twitter_ext = {};
+          twitter_ext["количество читателей"] = document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
+          ).innerText;
 
-        twitter_ext["количество твитов"] = document.querySelector(
-          "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
-        ).innerText;
+          twitter_ext["количество твитов"] = document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
+          ).innerText;
 
-        twitter_pinned_entry = {};
-        twitter_pinned_entry["Содержание"] = document.querySelectorAll(
-          ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
-        )[0].innerText;
-        twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
-          "Содержание"
-        ].replace(/\n/g, " ");
+          twitter_pinned_entry = {};
+          twitter_pinned_entry["Содержание"] = document.querySelectorAll(
+            ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
+          )[0].innerText;
+          try {
+            twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
+              "Содержание"
+            ].replace(/\n/g, " ");
+          } catch (error) {
+            twitter_pinned_entry["Содержание"] = "-";
+          }
 
-        twitter_pinned_entry["количество лайков"] = document.querySelectorAll(
-          "div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
-        )[0].innerText;
-
-        twitter_pinned_entry["количество комментариев"] =
-          document.querySelectorAll(
-            "div:nth-child(1) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+          twitter_pinned_entry["количество лайков"] = document.querySelectorAll(
+            "div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
           )[0].innerText;
 
-        twitter_pinned_entry["количество ретвитов"] = document.querySelectorAll(
-          "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
-        )[0].innerText;
+          twitter_pinned_entry["количество комментариев"] =
+            document.querySelectorAll(
+              "div:nth-child(1) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+            )[0].innerText;
 
-        let temp = document.querySelector("time").dateTime.split("T")[0];
+          twitter_pinned_entry["количество ретвитов"] =
+            document.querySelectorAll(
+              "div:nth-child(2) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
+            )[0].innerText;
 
-        twitter_pinned_entry["дата публикации"] =
-          temp.split("-")[2] +
-          "-" +
-          temp.split("-")[1] +
-          "-" +
-          temp.split("-")[0];
+          let temp = document.querySelector("time").dateTime.split("T")[0];
 
-        twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
-        return twitter_ext;
-      });
+          twitter_pinned_entry["дата публикации"] =
+            temp.split("-")[2] +
+            "-" +
+            temp.split("-")[1] +
+            "-" +
+            temp.split("-")[0];
+
+          twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
+          return twitter_ext;
+        });
+      } catch (e) {
+        twitter_ext = "Account has been banned";
+        about_token = "No Data";
+      }
 
       about_token = await page.evaluate(() => {
         return document.querySelector(
@@ -280,9 +297,13 @@ async function parse() {
             ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
           )[0].innerText;
 
-          twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
-            "Содержание"
-          ].replace(/\n/g, " ");
+          try {
+            twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
+              "Содержание"
+            ].replace(/\n/g, " ");
+          } catch (error) {
+            twitter_pinned_entry["Содержание"] = "-";
+          }
 
           twitter_pinned_entry["количество лайков"] = document.querySelectorAll(
             "div:nth-child(3) > div > div > div.css-1dbjc4n.r-xoduu5.r-1udh08x > span > span > span"
@@ -565,11 +586,13 @@ bot.start((ctx) => ctx.reply(""));
 bot.help((ctx) => ctx.reply());
 
 bot.command("hamster", async (ctx) => {
+  let count = 0;
   try {
     ctx.telegram.sendDocument(ctx.from.id, {
       source: current_last_file,
       filename: current_last_file,
     });
+    console.log("html has been send " + count + " times");
   } catch (e) {
     console.log(e);
     ctx.reply(
