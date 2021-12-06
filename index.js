@@ -107,17 +107,26 @@ async function parse() {
         let result =
           document.querySelector(".mainChainAddress").parentElement.href;
 
+
         if (result.includes("harmony")) {
           result =
             "one" +
             document
               .querySelector(".mainChainAddress")
               .parentElement.href.split("one")[1];
+
         } else if (result.includes("solscan.io")) {
-          result = document
-            .querySelector(".mainChainAddress")
-            .parentElement.href.split("token/")[1];
-        } else {
+
+          if(result.includes("token")){
+            result = document.querySelector(".mainChainAddress").parentElement.href.split("token/")[1];
+          }
+          else if (result.includes("account")){
+              result = document.querySelector(".mainChainAddress").parentElement.href.split("account/")[1];
+          }
+          else result='No Data'
+
+        }
+         else {
           result =
             "0x" +
             document
