@@ -27,7 +27,7 @@ let current_last_file = "Crypto Ham$ter от 5.12.2021.html";
 //------------main function-----------
 async function parse() {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null,
     hasTouch: true,
     args: ["--no-sandbox", "--start-maximized", "--disable-notifications"],
@@ -113,7 +113,7 @@ async function parse() {
             document
               .querySelector(".mainChainAddress")
               .parentElement.href.split("one")[1];
-        } else if (result.includes("solana")) {
+        } else if (result.includes("solscan.io")) {
           result = document
             .querySelector(".mainChainAddress")
             .parentElement.href.split("token/")[1];
@@ -193,6 +193,7 @@ async function parse() {
         }
         return result;
       });
+
       console.log(twitter);
 
       await cloakedPage.goto(twitter);
@@ -249,16 +250,20 @@ async function parse() {
           return twitter_ext;
         });
       } catch (e) {
-        twitter_ext = "Account has been banned";
+        twitter_ext = "Account is banned or not yet filled";
         about_token = "No Data";
       }
 
-      about_token = await page.evaluate(() => {
-        return document.querySelector(
-          "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
-        ).innerText;
-      });
-      about_token = about_token.split(/\n/)[0];
+      try {
+        about_token = await page.evaluate(() => {
+          return document.querySelector(
+            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
+          ).innerText;
+        });
+        about_token = about_token.split(/\n/)[0];
+      } catch (error) {
+        about_token = "No Data";
+      }
     } catch (error) {
       try {
         twitter = await page.evaluate(() => {
@@ -332,19 +337,23 @@ async function parse() {
           return twitter_ext;
         });
 
-        about_token = await page.evaluate(() => {
-          return document.querySelector(
-            "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
-          ).innerText;
-        });
-        about_token = about_token.split(/\n/)[0];
+        try {
+          about_token = await page.evaluate(() => {
+            return document.querySelector(
+              "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(3) > div > div"
+            ).innerText;
+          });
+          about_token = about_token.split(/\n/)[0];
+        } catch (error) {
+          about_token = "No Data";
+        }
       } catch (error) {
         twitter = "No Data";
         twitter_ext = "No Data";
         about_token = "No Data";
       }
     }
-
+    console.log(twitter_ext);
     token_response = {
       название: name,
       символ: token_symbol,
@@ -389,11 +398,15 @@ async function start() {
           <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
 
       token_info = await parse();
-
+      console.log(token_info);
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
-          if (token_info[element]["twitter info"] == "No Data") {
+          if (
+            token_info[element]["twitter info"] == "No Data" ||
+            token_info[element]["twitter info"] ==
+              "Account is banned or not yet filled"
+          ) {
             data += `<div
             class="card mb-3"
             style="
@@ -444,6 +457,9 @@ async function start() {
         >${token_info[element]["twitter link"]}</a
       >
     </p>
+    <p class="card-text"><b>Twitter info: </b> ${
+      token_info[element]["twitter info"]
+    }</p>
 
     <p class="card-text" style="position: absolute;bottom: 0;margin-bottom: 10px;">
       <small class="text-muted">${date.getDate()}.${
