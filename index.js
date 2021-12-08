@@ -388,6 +388,20 @@ async function start() {
     try {
       let date = new Date();
       let token_info = {};
+
+      let nominations = {}
+      
+      let max_followers
+      let change_max_min
+      let change_max_current
+      let max_market_cap
+
+      nominations = Object.keys(token_info).forEach((element) => {
+        
+
+
+      })
+      
       let data = `<!DOCTYPE html>
       <html lang="en">
         <head>
