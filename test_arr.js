@@ -66,16 +66,8 @@ let token_info = {
 
 let nominations = {};
 
-let max_followers = 0;
-let max_followers_owner = "";
-let change_max_min = 0;
-let change_max_min_owner = "";
-let change_max_current = 0;
-let change_max_current_owner = "";
-let max_market_cap = 0;
-let max_market_cap_owner = "";
 
-nominations = Object.keys(token_info).forEach((element) => {
+Object.keys(token_info).forEach((element) => {
   let nice_type_max_min;
   try {
     nice_type_max_min = Number(
@@ -103,22 +95,22 @@ nominations = Object.keys(token_info).forEach((element) => {
 
   if (nice_type_follow > max_followers) {
     max_followers = nice_type_follow;
-    max_followers_owner = token_info[element]["название"];
+    nominations['max_followers_owner'] = token_info[element]["название"];
   }
 
   if (nice_type_cap > max_market_cap) {
     max_market_cap = nice_type_cap;
-    max_market_cap_owner = token_info[element]["название"];
+    nominations['max_market_cap_owner'] = token_info[element]["название"];
   }
 
   if (nice_type_max_min > change_max_min) {
     change_max_min = nice_type_max_min;
-    change_max_min_owner = token_info[element]["название"];
+    nominations['change_max_min_owner'] = token_info[element]["название"];
   }
 
   if (nice_type_max_current > change_max_current) {
     change_max_current = nice_type_max_current;
-    change_max_current_owner = token_info[element]["название"];
+    nominations['change_max_current_owner'] = token_info[element]["название"];
   }
 });
 
@@ -141,9 +133,4 @@ function nice_type_func(elem) {
   return nice_type;
 }
 
-console.log(change_max_current_owner);
-console.log(change_max_current);
-console.log(change_max_min_owner);
-console.log(change_max_min);
-console.log(max_market_cap_owner);
-console.log(max_followers_owner);
+console.log(nominations);

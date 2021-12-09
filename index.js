@@ -60,7 +60,7 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 10; i < 25; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
@@ -107,26 +107,23 @@ async function parse() {
         let result =
           document.querySelector(".mainChainAddress").parentElement.href;
 
-
         if (result.includes("harmony")) {
           result =
             "one" +
             document
               .querySelector(".mainChainAddress")
               .parentElement.href.split("one")[1];
-
         } else if (result.includes("solscan.io")) {
-
-          if(result.includes("token")){
-            result = document.querySelector(".mainChainAddress").parentElement.href.split("token/")[1];
-          }
-          else if (result.includes("account")){
-              result = document.querySelector(".mainChainAddress").parentElement.href.split("account/")[1];
-          }
-          else result='No Data'
-
-        }
-         else {
+          if (result.includes("token")) {
+            result = document
+              .querySelector(".mainChainAddress")
+              .parentElement.href.split("token/")[1];
+          } else if (result.includes("account")) {
+            result = document
+              .querySelector(".mainChainAddress")
+              .parentElement.href.split("account/")[1];
+          } else result = "No Data";
+        } else {
           result =
             "0x" +
             document
@@ -194,7 +191,10 @@ async function parse() {
         let result;
         for (let i = 0; i < array.length; i++) {
           if (array[i].innerText.includes("twitter.com")) {
-            result = array[i].children[0].href;
+            if (array[i].children[0].href.includes("/status")) {
+              result = array[i].children[0].href.split("/status")[0];
+            } else result = array[i].children[0].href;
+
             break;
           } else {
             result = "No Data";
@@ -362,7 +362,7 @@ async function parse() {
         about_token = "No Data";
       }
     }
-    
+
     token_response = {
       название: name,
       символ: token_symbol,
@@ -389,19 +389,92 @@ async function start() {
       let date = new Date();
       let token_info = {};
 
-      let nominations = {}
-      
-      let max_followers
-      let change_max_min
-      let change_max_current
-      let max_market_cap
+      let nominations = {};
+      token_info = await parse();
+      let max_followers = 0;
+      let max_market_cap = 0;
+      let change_max_min = 0;
+      let change_max_current = 0;
 
-      nominations = Object.keys(token_info).forEach((element) => {
-        
+      Object.keys(token_info).forEach((element) => {
+        let nice_type_max_min;
+        try {
+          nice_type_max_min = Number(
+            token_info[element]["максимальная цена"].split("(")[1].split("x")[0]
+          );
+        } catch (error) {
+          nice_type_max_min = 0;
+        }
 
+        let nice_type_max_current;
+        try {
+          nice_type_max_current =
+            Number(
+              token_info[element]["максимальная цена"]
+                .split("(")[1]
+                .split("x")[0]
+            ) - Number(token_info[element]["цена"].split("(")[1].split("x")[0]);
+        } catch (error) {
+          nice_type_max_current = 0;
+        }
 
-      })
-      
+        let nice_type_follow = nice_type_func(
+          token_info[element]["twitter info"]["количество читателей"]
+        );
+
+        let nice_type_cap = nice_type_func(
+          token_info[element]["капитализация"]
+        );
+
+        if (nice_type_follow > max_followers) {
+          max_followers = nice_type_follow;
+          nominations["max_followers_owner"] = token_info[element]["название"];
+        }
+
+        if (nice_type_cap > max_market_cap) {
+          max_market_cap = nice_type_cap;
+          nominations["max_market_cap_owner"] = token_info[element]["название"];
+        }
+
+        if (nice_type_max_min > change_max_min) {
+          change_max_min = nice_type_max_min;
+          nominations["change_max_min_owner"] = token_info[element]["название"];
+        }
+
+        if (nice_type_max_current > change_max_current) {
+          change_max_current = nice_type_max_current;
+          nominations["change_max_current_owner"] =
+            token_info[element]["название"];
+        }
+      });
+
+      function nice_type_func(elem) {
+        let nice_type = 0;
+        try {
+          if (elem.includes("K")) {
+            nice_type = elem.replace("K", "");
+            nice_type = Number(nice_type) * 1000;
+          } else if (elem.includes("$") || elem.includes(",")) {
+            nice_type = elem.replace(/,|\$/g, "");
+            nice_type = Number(nice_type);
+          } else if (elem.includes("- -")) {
+            nice_type = elem.replace("- -", 0);
+            nice_type = Number(nice_type);
+          } else if (elem.includes(" ")) {
+            nice_type = elem.replace(" ", "");
+            nice_type = Number(nice_type);
+          }
+          return nice_type;
+        } catch (error) {
+          return 0;
+        }
+      }
+
+      console.log(token_info);
+      console.log(nominations);
+      console.log(token_info[nominations["max_followers_owner"]]);
+
+      await sleep(3000);
       let data = `<!DOCTYPE html>
       <html lang="en">
         <head>
@@ -418,10 +491,146 @@ async function start() {
           <title>Crypto Hamster</title>
         </head>
         <body>
-          <div style="display: flex; flex-wrap: wrap; justify-content: center">`;
+          <div style="display: flex; flex-wrap: wrap; justify-content: center">
+          <div
+          class="card mb-3"
+          style="
+            width: 600px;
+            height: auto;
+            margin: 30px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0);
+          "
+        >
+          <div class="row g-0">
+            <div class="col-md-4" style='text-align: center;'>
+              <img src="https://i.ibb.co/WkDc1sv/transparent-award-icon-trophy-icon-soccer-icon-5dcdec45a2e790-7969843615737764536673.png" height="200px" alt="..." />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title"><b>${
+                  nominations["max_followers_owner"]
+                } - "KING OF TWITTER"</b></h5>
+                <p class="card-text">
+                  This token has the largest Twitter community of any token added today.
+                </p>
+                <p class="card-text">
+                  <b>Number of readers: </b> ${
+                    token_info[nominations["max_followers_owner"]][
+                      "twitter info"
+                    ]["количество читателей"]
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="card mb-3"
+          style="
+            width: 600px;
+            height: auto;
+            margin: 30px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0);
+          "
+        >
+          <div class="row g-0">
+            <div class="col-md-4" style='text-align: center;'>
+              <img src="https://i.ibb.co/WkDc1sv/transparent-award-icon-trophy-icon-soccer-icon-5dcdec45a2e790-7969843615737764536673.png" height="200px" alt="..." />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title"><b>${
+                  nominations["max_market_cap_owner"]
+                } - "BIGGE$T MARKETCAP"</b></h5>
+                <p class="card-text">
+                  This token has the largest capitalization of all tokens added today.
+                </p>
+                <p class="card-text">
+                  <b>Marketcap: </b> ${
+                    token_info[nominations["max_market_cap_owner"]][
+                      "капитализация"
+                    ]
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="card mb-3"
+          style="
+            width: 600px;
+            height: auto;
+            margin: 30px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0);
+          "
+        >
+          <div class="row g-0">
+            <div class="col-md-4" style='text-align: center;'>
+              <img src="https://i.ibb.co/WkDc1sv/transparent-award-icon-trophy-icon-soccer-icon-5dcdec45a2e790-7969843615737764536673.png" height="200px" alt="..." />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title"><b>${
+                  nominations["change_max_min_owner"]
+                } - "EXPLOSIVE START"</b></h5>
+                <p class="card-text">
+                  This token has the the largest number of x's among all tokens added today.
+                </p>
+                <p class="card-text">
+                  <b>Price & x's : </b>${
+                    token_info[nominations["change_max_min_owner"]][
+                      "максимальная цена"
+                    ]
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="card mb-3"
+          style="
+            width: 600px;
+            height: auto;
+            margin: 30px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0);
+          "
+        >
+          <div class="row g-0">
+            <div class="col-md-4" style='text-align: center;'>
+              <img src="https://i.ibb.co/WkDc1sv/transparent-award-icon-trophy-icon-soccer-icon-5dcdec45a2e790-7969843615737764536673.png" height="200px" alt="..." />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title"><b>${
+                  nominations["change_max_current_owner"]
+                } - "CORRECTION OR SCAM?"</b></h5>
+                <p class="card-text">
+                  This token 
+                  has the largest correction from its maximum price (in x's).
+                </p>
+                <p class="card-text">
+                  <b>Current price: </b>${
+                    token_info[nominations["change_max_current_owner"]]["цена"]
+                  }
+                  <br>
+                  <b>Max price: </b>${
+                    token_info[nominations["change_max_current_owner"]][
+                      "максимальная цена"
+                    ]
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
 
-      token_info = await parse();
-      
       await sleep(3000);
       try {
         Object.keys(token_info).forEach((element) => {
@@ -626,13 +835,12 @@ bot.start((ctx) => ctx.reply(""));
 bot.help((ctx) => ctx.reply());
 
 bot.command("hamster", async (ctx) => {
-  
   try {
     ctx.telegram.sendDocument(ctx.from.id, {
       source: current_last_file,
       filename: current_last_file,
     });
-    count++
+    count++;
     console.log("html has been send " + count + " times");
   } catch (e) {
     console.log(e);
