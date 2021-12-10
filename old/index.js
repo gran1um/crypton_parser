@@ -22,7 +22,7 @@ function getRandomInt(min, max) {
 
 //-----------------------------------------
 
-let current_last_file = "bot_is_booting.html";
+let current_last_file = "Crypto Ham$ter от 5.12.2021.html";
 
 //------------main function-----------
 async function parse() {
@@ -60,7 +60,7 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 10; i < data.length; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
@@ -189,7 +189,7 @@ async function parse() {
       twitter = await page.evaluate(() => {
         let array = document.querySelectorAll(".tippy-content ul li");
         let result;
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < array.length; i++) {
           if (array[i].innerText.includes("twitter.com")) {
             if (array[i].children[0].href.includes("/status")) {
               result = array[i].children[0].href.split("/status")[0];
@@ -222,7 +222,7 @@ async function parse() {
 
           twitter_pinned_entry = {};
           twitter_pinned_entry["Содержание"] = document.querySelectorAll(
-            ".css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
+            ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
           )[0].innerText;
           try {
             twitter_pinned_entry["Содержание"] = twitter_pinned_entry[
@@ -301,14 +301,14 @@ async function parse() {
           twitter_ext["количество читателей"] = document.querySelector(
             "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
           ).innerText;
-            
+
           twitter_ext["количество твитов"] = document.querySelector(
             "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
           ).innerText;
 
           twitter_pinned_entry = {};
           twitter_pinned_entry["Содержание"] = document.querySelectorAll(
-            ".css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0" 
+            ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
           )[0].innerText;
 
           try {
@@ -345,7 +345,7 @@ async function parse() {
           twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
           return twitter_ext;
         });
-        
+
         try {
           about_token = await page.evaluate(() => {
             return document.querySelector(
@@ -397,7 +397,6 @@ async function start() {
       let change_max_current = 0;
 
       Object.keys(token_info).forEach((element) => {
-
         let nice_type_max_min;
         try {
           nice_type_max_min = Number(
@@ -470,9 +469,7 @@ async function start() {
           return 0;
         }
       }
-      
-      console.log(nominations);
-      
+
       await sleep(3000);
       let data = `<!DOCTYPE html>
       <html lang="en">
@@ -835,9 +832,9 @@ start();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 let count = 0;
-bot.start((ctx) => ctx.reply("Hello, check /help!"));
+bot.start((ctx) => ctx.reply(""));
 
-bot.help((ctx) => ctx.reply("Send /hamster"));
+bot.help((ctx) => ctx.reply());
 
 bot.command("hamster", async (ctx) => {
   try {
