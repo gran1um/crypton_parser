@@ -60,7 +60,7 @@ async function parse() {
 
   await sleep(1000);
 
-  for (let i = 10; i < 25; i++) {
+  for (let i = 10; i < data.length; i++) {
     let token_response = await allAboutTokens(data[i]);
     await sleep(1000);
     token[token_response["название"]] = token_response;
@@ -207,7 +207,7 @@ async function parse() {
 
       await cloakedPage.goto(twitter);
 
-      await sleep(2000);
+      await sleep(3000);
 
       try {
         twitter_ext = await page.evaluate(() => {
@@ -470,10 +470,6 @@ async function start() {
         }
       }
 
-      console.log(token_info);
-      console.log(nominations);
-      console.log(token_info[nominations["max_followers_owner"]]);
-
       await sleep(3000);
       let data = `<!DOCTYPE html>
       <html lang="en">
@@ -508,9 +504,11 @@ async function start() {
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title"><b>${
-                  nominations["max_followers_owner"]
-                } - "KING OF TWITTER"</b></h5>
+                <h5 class="card-title" style='text-align:center'><b>"KING OF TWITTER"</b></h5>
+                <h5 class="card-title">
+                <b>${nominations["max_followers_owner"]}</b>
+                </h5>
+                
                 <p class="card-text">
                   This token has the largest Twitter community of any token added today.
                 </p>
@@ -541,9 +539,11 @@ async function start() {
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title"><b>${
-                  nominations["max_market_cap_owner"]
-                } - "BIGGE$T MARKETCAP"</b></h5>
+              <h5 class="card-title" style='text-align:center'><b>"BIGGE$T MARKETCAP"</b></h5>
+              <h5 class="card-title" ><b>${
+                nominations["max_market_cap_owner"]
+              }</b></h5>
+              
                 <p class="card-text">
                   This token has the largest capitalization of all tokens added today.
                 </p>
@@ -574,9 +574,10 @@ async function start() {
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title"><b>${
-                  nominations["change_max_min_owner"]
-                } - "EXPLOSIVE START"</b></h5>
+              <h5 class="card-title" style='text-align:center'>"EXPLOSIVE START"</b></h5>
+              <h5 class="card-title" >${
+                nominations["change_max_min_owner"]
+              }</b></h5>
                 <p class="card-text">
                   This token has the the largest number of x's among all tokens added today.
                 </p>
@@ -607,9 +608,10 @@ async function start() {
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title"><b>${
-                  nominations["change_max_current_owner"]
-                } - "CORRECTION OR SCAM?"</b></h5>
+              <h5 class="card-title" style='text-align:center'><b>"CORRECTION OR SCAM?"</b></h5>
+              <h5 class="card-title"><b>${
+                nominations["change_max_current_owner"]
+              }</b></h5>
                 <p class="card-text">
                   This token 
                   has the largest correction from its maximum price (in x's).
