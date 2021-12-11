@@ -301,14 +301,14 @@ async function parse() {
           twitter_ext["количество читателей"] = document.querySelector(
             "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div.css-1dbjc4n.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2) > a > span.css-901oao.css-16my406.r-18jsvk2.r-poiln3.r-b88u0q.r-bcqeeo.r-qvutc0 > span"
           ).innerText;
-            
+
           twitter_ext["количество твитов"] = document.querySelector(
             "#react-root > div > div > div.css-1dbjc4n.r-18u37iz.r-13qz1uu.r-417010 > main > div > div > div > div.css-1dbjc4n.r-14lw9ot.r-jxzhtn.r-1ljd8xs.r-13l2t4g.r-1phboty.r-1jgb5lz.r-11wrixw.r-61z16t.r-1ye8kvj.r-13qz1uu.r-184en5c > div > div.css-1dbjc4n.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div.css-1dbjc4n.r-1loqt21.r-136ojw6 > div > div > div > div > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
           ).innerText;
 
           twitter_pinned_entry = {};
           twitter_pinned_entry["Содержание"] = document.querySelectorAll(
-            ".css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0" 
+            ".css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
           )[0].innerText;
 
           try {
@@ -345,7 +345,7 @@ async function parse() {
           twitter_ext["Закрепленная запись"] = twitter_pinned_entry;
           return twitter_ext;
         });
-        
+
         try {
           about_token = await page.evaluate(() => {
             return document.querySelector(
@@ -397,7 +397,6 @@ async function start() {
       let change_max_current = 0;
 
       Object.keys(token_info).forEach((element) => {
-
         let nice_type_max_min;
         try {
           nice_type_max_min = Number(
@@ -470,9 +469,9 @@ async function start() {
           return 0;
         }
       }
-      
+
       console.log(nominations);
-      
+
       await sleep(3000);
       let data = `<!DOCTYPE html>
       <html lang="en">
@@ -490,7 +489,7 @@ async function start() {
           <title>Crypto Hamster</title>
         </head>
         <body>
-          <div style="display: flex; flex-wrap: wrap; justify-content: center">
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; max-width: 3200px">
           <div
           class="card mb-3"
           style="
@@ -577,8 +576,8 @@ async function start() {
             </div>
             <div class="col-md-8">
               <div class="card-body">
-              <h5 class="card-title" style='text-align:center'>"EXPLOSIVE START"</b></h5>
-              <h5 class="card-title" >${
+              <h5 class="card-title" style='text-align:center'><b>"EXPLOSIVE START"</b></h5>
+              <h5 class="card-title" ><b>${
                 nominations["change_max_min_owner"]
               }</b></h5>
                 <p class="card-text">
@@ -822,9 +821,11 @@ async function start() {
         } catch (e) {
           console.log(e);
         }
-      } catch (error) {}
+      } catch (error) {
+        await sleep(48 * 60 * 60 * 1000);
+      }
 
-      await sleep(24 * 60 * 60 * 1000);
+      await sleep(12 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
     }
