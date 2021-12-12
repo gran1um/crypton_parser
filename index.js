@@ -379,6 +379,7 @@ async function parse() {
     };
 
     await sleep(1000);
+
     return token_response;
   }
 }
@@ -820,14 +821,16 @@ async function start() {
           console.log("complete html doc!");
         } catch (e) {
           console.log(e);
+          await sleep(48 * 60 * 60 * 1000);
         }
       } catch (error) {
-        await sleep(48 * 60 * 60 * 1000);
+        await sleep(48 * 60 * 60 * 1000); // error main catch
       }
 
       await sleep(12 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
+      await sleep(48 * 60 * 60 * 1000);
     }
   }
 }
