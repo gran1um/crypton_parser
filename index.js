@@ -819,20 +819,16 @@ async function start() {
             data
           );
           console.log("complete html doc!");
-          await browser.close();
         } catch (e) {
           console.log(e);
-          await browser.close();
           await sleep(48 * 60 * 60 * 1000);
         }
       } catch (error) {
-        await browser.close();
         await sleep(48 * 60 * 60 * 1000); // error main catch
       }
       await sleep(12 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
-      await browser.close();
       await sleep(48 * 60 * 60 * 1000);
     }
   }
