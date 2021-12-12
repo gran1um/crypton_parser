@@ -829,7 +829,6 @@ async function start() {
         await browser.close();
         await sleep(48 * 60 * 60 * 1000); // error main catch
       }
-      await browser.close();
       await sleep(12 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
