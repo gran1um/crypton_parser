@@ -288,6 +288,9 @@ async function parse() {
               "#__next > div > div > div.sc-57oli2-0.comDeo.cmc-body-wrapper > div > div.sc-16r8icm-0.eMxKgr.container > div.n78udj-0.jskEGI > div > div.sc-16r8icm-0.hMKivi.linksSection > div > div.sc-16r8icm-0.sc-10up5z1-1.eUVvdh > ul > li:nth-child(3) > a"
             ).href;
             return result;
+          } else {
+            result = "No Data";
+            return result;
           }
         });
         console.log(twitter);
@@ -472,6 +475,7 @@ async function start() {
       }
 
       console.log(nominations);
+      token_info[nominations["max_followers_owner"]];
 
       await sleep(4000);
       let data = `<!DOCTYPE html>
@@ -819,17 +823,17 @@ async function start() {
             data
           );
           console.log("complete html doc!");
+          await sleep(12 * 60 * 60 * 1000);
         } catch (e) {
           console.log(e);
-          await sleep(48 * 60 * 60 * 1000);
+          await sleep(12 * 60 * 60 * 1000);
         }
       } catch (error) {
-        await sleep(48 * 60 * 60 * 1000); // error main catch
+        await sleep(12 * 60 * 60 * 1000); // error main catch
       }
-      await sleep(12 * 60 * 60 * 1000);
     } catch (e) {
       console.log(e);
-      await sleep(48 * 60 * 60 * 1000);
+      await sleep(12 * 60 * 60 * 1000);
     }
   }
 }
